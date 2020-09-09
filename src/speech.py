@@ -5,20 +5,18 @@ from playsound import playsound
 
 
 def detect_voice_command():
-    voice_command = "No Audio detected"
+    voice_command = "No Audio"
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        #while (1):
         print("speak")
         try:
-
-            playsound("../bip.wav")
+            playsound("C:\\Users\\nico_\\Documents\\Project\\LoLTimers\\dist\\bip.wav")
             sleep(0.25)
             audio = r.listen(source, 1, 3)
             voice_command = r.recognize_google(audio, language='fr-FR')
             print("You said " + voice_command)
         except Exception:
-            print ("No Audio detected")
+            print("No Audio detected")
         return voice_command
 
 

@@ -4,13 +4,14 @@ import re
 import time
 from ctypes import wintypes
 
+import win32con
 
-#user32 = ctypes.WinDLL('user32', use_last_error=True)
+user32 = ctypes.WinDLL('user32', use_last_error=True)
 
 keyboard_summoners_dict = {"flash": [0x46, 0x4C, 0x41, 0x53, 0x48],
                            "teleport": [0x54, 0x45, 0x4C, 0x45, 0x50, 0x4F, 0x52, 0x54],
                            "feu": [0x49, 0x47, 0x4E, 0x49, 0x54, 0x45],
-                           "exhaust": [0x47, 0x58, 0x48, 0x41, 0x55, 0x53, 0x45]
+                           "exhaust": [0x45, 0x58, 0x48, 0x41, 0x55, 0x53, 0x54, 0x45]
                            }
 
 keyboard_role_dict = {
@@ -41,6 +42,8 @@ cooldown_summoner = {
     "ignite": 180,
     "teleport": 240,
 }
+
+
 # def history():
 
 def assemble_timer(summ, voice_command):
@@ -48,27 +51,28 @@ def assemble_timer(summ, voice_command):
     print("timer raw", timer_raw)
     timer_raw = str(int(timer_raw) + cooldown_summoner[summ])
     timer_sentence = []
+    print("timer raw", timer_raw)
     for t in timer_raw:
+        print(t)
         if keyboard_number_dict[t]:
             timer_sentence.append(keyboard_number_dict[t])
     return timer_sentence
 
-def assemble_sentence(summoners, role, timer): # <Summoner Spell> <Role> <Timer>
+
+def assemble_sentence(summoners, role, timer):  # <Summoner Spell> <Role> <Timer>
     summoner_input_code = keyboard_summoners_dict[summoners]
     role_input_code = keyboard_role_dict[role]
     space_input = [0x20]
     sentence = summoner_input_code + space_input + role_input_code + space_input + timer
     return sentence
 
-user32 = ctypes.WinDLL('user32', use_last_error=True)
 
 def write_word(sentence):
+    user32.keybd_event(0x0D, 0, 2, 0)
     user32.keybd_event(0x0D, 0, 0, 0)
     for input in sentence:
+        user32.keybd_event(input, 0, 2, 0)
         user32.keybd_event(input, 0, 0, 0)
-
-
-
-
-
-
+    time.sleep(0.20)
+    user32.keybd_event(0x0D, 0, 2, 0)
+    user32.keybd_event(0x0D, 0, 0, 0)
